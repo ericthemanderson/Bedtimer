@@ -4,17 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bedtime Routine Tracker</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <style>
+        body { margin: 0; padding: 0; }
+    </style>
 </head>
 <body>
     <div id="root"></div>
     
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
     <script type="text/babel">
         const { useState, useEffect } = React;
+        const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
 
         function BedtimeTracker() {
           const [isRunning, setIsRunning] = useState(false);
@@ -33,11 +39,14 @@
           const [showSpendPoints, setShowSpendPoints] = useState(false);
           const [selectedKid, setSelectedKid] = useState('');
           const [pointsToSpend, setPointsToSpend] = useState('');
+          const [prizeDescription, setPrizeDescription] = useState('');
           
           const [newKidName, setNewKidName] = useState('');
           const [newTaskName, setNewTaskName] = useState('');
           const [editingKid, setEditingKid] = useState(null);
           const [editingTask, setEditingTask] = useState(null);
+
+          const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
 
           useEffect(() => {
             let interval;
@@ -158,6 +167,7 @@
             
             setSelectedKid('');
             setPointsToSpend('');
+            setPrizeDescription('');
             setShowSpendPoints(false);
           };
 
@@ -195,6 +205,25 @@
             newTasks[index] = newName;
             setTasks(newTasks);
             setEditingTask(null);
+          };
+
+          const getChartData = () => {
+            const data = [];
+            
+            tasks.forEach((task, idx) => {
+              const dataPoint = { task: task, taskNum: idx + 1 };
+              
+              kids.forEach(kid => {
+                const key = `${kid}-${task}`;
+                if (completions[key]) {
+                  dataPoint[kid] = completions[key].absoluteTime / 1000;
+                }
+              });
+              
+              data.push(dataPoint);
+            });
+            
+            return data;
           };
 
           const calculateSummary = () => {
@@ -238,31 +267,32 @@
           };
 
           const summary = showSummary ? calculateSummary() : null;
+          const chartData = Object.keys(completions).length > 0 ? getChartData() : [];
 
           return (
             <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 p-4">
               <div className="max-w-6xl mx-auto">
-                {/* Header */}
                 <div className="bg-white rounded-t-3xl shadow-lg p-6">
                   <div className="flex justify-between items-center mb-4">
                     <h1 className="text-3xl font-bold text-indigo-900">⏰ Bedtime Tracker</h1>
                     <div className="flex gap-2">
                       <button
                         onClick={() => setShowHistory(!showHistory)}
-                        className="p-3 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 text-2xl"
+                        className="p-3 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors text-2xl"
                       >
                         📅
                       </button>
                       <button
                         onClick={() => setEditMode(!editMode)}
-                        className={`p-3 rounded-full text-2xl ${editMode ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600'}`}
+                        className={`p-3 rounded-full transition-colors text-2xl ${
+                          editMode ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600'
+                        }`}
                       >
                         ✏️
                       </button>
                     </div>
                   </div>
                   
-                  {/* Stopwatch */}
                   <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-6 text-white">
                     <div className="text-6xl font-mono font-bold text-center mb-4">
                       {formatTime(elapsedTime)}
@@ -271,7 +301,7 @@
                       {!isRunning && elapsedTime === 0 && (
                         <button
                           onClick={startStopwatch}
-                          className="bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold hover:bg-indigo-50"
+                          className="bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold hover:bg-indigo-50 transition-colors"
                         >
                           ▶️ Start Bedtime
                         </button>
@@ -279,7 +309,7 @@
                       {(isRunning || elapsedTime > 0) && (
                         <button
                           onClick={resetStopwatch}
-                          className="bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold hover:bg-indigo-50"
+                          className="bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold hover:bg-indigo-50 transition-colors"
                         >
                           🔄 Reset
                         </button>
@@ -288,13 +318,12 @@
                   </div>
                 </div>
 
-                {/* Points Display */}
                 <div className="bg-white shadow-lg p-4">
                   <div className="flex justify-between items-center">
                     <h2 className="text-xl font-bold text-indigo-900">🏆 Points Leaderboard</h2>
                     <button
                       onClick={() => setShowSpendPoints(!showSpendPoints)}
-                      className="bg-green-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-green-600"
+                      className="bg-green-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-green-600 transition-colors"
                     >
                       🎁 Spend Points
                     </button>
@@ -310,39 +339,54 @@
                   </div>
                 </div>
 
-                {/* Spend Points Modal */}
                 {showSpendPoints && (
                   <div className="bg-white shadow-lg p-4 border-t-2 border-green-500">
                     <h3 className="text-lg font-bold text-gray-800 mb-3">Spend Points on Prize</h3>
                     <div className="space-y-3">
-                      <select 
-                        value={selectedKid} 
-                        onChange={(e) => setSelectedKid(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg"
-                      >
-                        <option value="">Select a kid</option>
-                        {kids.map(kid => (
-                          <option key={kid} value={kid}>{kid} ({points[kid] || 0} points)</option>
-                        ))}
-                      </select>
-                      <input
-                        type="number"
-                        value={pointsToSpend}
-                        onChange={(e) => setPointsToSpend(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg"
-                        placeholder="Enter points"
-                      />
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Kid</label>
+                        <select 
+                          value={selectedKid} 
+                          onChange={(e) => setSelectedKid(e.target.value)}
+                          className="w-full px-3 py-2 border rounded-lg"
+                        >
+                          <option value="">Select a kid</option>
+                          {kids.map(kid => (
+                            <option key={kid} value={kid}>{kid} ({points[kid] || 0} points)</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Points to Spend</label>
+                        <input
+                          type="number"
+                          value={pointsToSpend}
+                          onChange={(e) => setPointsToSpend(e.target.value)}
+                          className="w-full px-3 py-2 border rounded-lg"
+                          placeholder="Enter points"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Prize (optional)</label>
+                        <input
+                          type="text"
+                          value={prizeDescription}
+                          onChange={(e) => setPrizeDescription(e.target.value)}
+                          className="w-full px-3 py-2 border rounded-lg"
+                          placeholder="e.g., Extra story, Stay up 15 min later"
+                        />
+                      </div>
                       <div className="flex gap-2">
                         <button
                           onClick={spendPoints}
                           disabled={!selectedKid || !pointsToSpend || parseInt(pointsToSpend) > (points[selectedKid] || 0)}
-                          className="flex-1 bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 disabled:bg-gray-300"
+                          className="flex-1 bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
                         >
                           Redeem
                         </button>
                         <button
                           onClick={() => setShowSpendPoints(false)}
-                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                         >
                           Cancel
                         </button>
@@ -351,7 +395,6 @@
                   </div>
                 )}
 
-                {/* History */}
                 {showHistory && (
                   <div className="bg-white shadow-lg p-4 border-t-2 border-purple-500 max-h-96 overflow-y-auto">
                     <h3 className="text-lg font-bold text-gray-800 mb-3">Previous Bedtimes</h3>
@@ -366,7 +409,7 @@
                                 {new Date(record.date).toLocaleDateString()} {new Date(record.date).toLocaleTimeString()}
                               </div>
                               <div className="text-sm text-gray-600">
-                                Points: {Object.entries(record.taskPoints || {}).map(([kid, pts]) => `${kid}: ${pts}`).join(', ')}
+                                Points earned: {Object.entries(record.taskPoints || {}).map(([kid, pts]) => `${kid}: ${pts}`).join(', ')}
                               </div>
                             </div>
                             <button
@@ -382,7 +425,6 @@
                   </div>
                 )}
 
-                {/* Task Table */}
                 <div className="bg-white shadow-lg overflow-x-auto">
                   <table className="w-full">
                     <thead>
@@ -407,7 +449,7 @@
                                   {kid}
                                 </span>
                                 {editMode && (
-                                  <button onClick={() => removeKid(i)} className="text-red-500 hover:text-red-700">
+                                  <button onClick={() => removeKid(i)} className="text-red-500 hover:text-red-700 text-lg">
                                     ❌
                                   </button>
                                 )}
@@ -426,7 +468,7 @@
                                 onKeyDown={(e) => e.key === 'Enter' && addKid()}
                                 className="px-2 py-1 border rounded text-sm"
                               />
-                              <button onClick={addKid} className="bg-indigo-500 text-white p-1 rounded">
+                              <button onClick={addKid} className="bg-indigo-500 text-white p-1 rounded text-lg">
                                 ➕
                               </button>
                             </div>
@@ -452,4 +494,148 @@
                                 <span onClick={() => editMode && setEditingTask(taskIdx)} className="cursor-pointer">
                                   {task}
                                 </span>
-                            
+                                {editMode && (
+                                  <button onClick={() => removeTask(taskIdx)} className="text-red-500 hover:text-red-700 text-lg">
+                                    ❌
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </td>
+                          {kids.map((kid, kidIdx) => {
+                            const key = `${kid}-${task}`;
+                            const completion = completions[key];
+                            return (
+                              <td key={kidIdx} className="p-2 text-center border-r border-indigo-100">
+                                <button
+                                  onClick={() => handleTaskComplete(kid, task)}
+                                  disabled={!isRunning || !!completion}
+                                  className={`w-full py-3 px-2 rounded-lg font-mono text-sm transition-all ${
+                                    completion
+                                      ? 'bg-green-500 text-white'
+                                      : isRunning
+                                      ? 'bg-indigo-100 hover:bg-indigo-200 text-indigo-900'
+                                      : 'bg-gray-100 text-gray-400'
+                                  }`}
+                                >
+                                  {completion ? formatTime(completion.lapTime) : '—'}
+                                </button>
+                              </td>
+                            );
+                          })}
+                          {editMode && <td></td>}
+                        </tr>
+                      ))}
+                      {editMode && (
+                        <tr className="border-t border-indigo-200">
+                          <td className="p-4">
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                placeholder="New task"
+                                value={newTaskName}
+                                onChange={(e) => setNewTaskName(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && addTask()}
+                                className="px-2 py-1 border rounded text-sm flex-1"
+                              />
+                              <button onClick={addTask} className="bg-indigo-500 text-white p-1 rounded text-lg">
+                                ➕
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {chartData.length > 0 && (
+                  <div className="bg-white shadow-lg p-6">
+                    <h3 className="text-xl font-bold text-indigo-900 mb-4">Progress Chart</h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="task" angle={-45} textAnchor="end" height={100} />
+                        <YAxis label={{ value: 'Time (seconds)', angle: -90, position: 'insideLeft' }} />
+                        <Tooltip />
+                        <Legend />
+                        {kids.map((kid, idx) => (
+                          <Line 
+                            key={kid} 
+                            type="monotone" 
+                            dataKey={kid} 
+                            stroke={colors[idx % colors.length]} 
+                            strokeWidth={2}
+                            dot={{ r: 5 }}
+                          />
+                        ))}
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+
+                {showSummary && summary && (
+                  <div className="bg-white rounded-b-3xl shadow-lg p-6">
+                    <div className="text-center mb-6">
+                      <div className="text-6xl mb-2">🏆</div>
+                      <h2 className="text-2xl font-bold text-indigo-900">Bedtime Complete! 🌙</h2>
+                    </div>
+                    
+                    {summary.overallWinner && (
+                      <div className="bg-gradient-to-r from-yellow-400 to-orange-400 rounded-xl p-4 mb-4 text-center">
+                        <div className="text-white">
+                          <div className="text-lg font-semibold">Overall Fastest</div>
+                          <div className="text-3xl font-bold">{summary.overallWinner.kid}</div>
+                          <div className="text-xl">{formatTime(summary.overallWinner.time)}</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="mb-4">
+                      <h3 className="font-bold text-indigo-900 text-lg mb-2">Points Earned Tonight:</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        {kids.map(kid => (
+                          <div key={kid} className="bg-indigo-50 rounded-lg p-3 text-center">
+                            <div className="font-bold text-indigo-900">{kid}</div>
+                            <div className="text-2xl font-bold text-indigo-600">+{summary.taskPoints[kid] || 0}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <h3 className="font-bold text-indigo-900 text-lg">Task Winners (1 point each):</h3>
+                      {Object.entries(summary.taskWinners).map(([task, winner]) => (
+                        <div key={task} className="bg-indigo-50 rounded-lg p-3 flex justify-between items-center">
+                          <span className="font-semibold text-indigo-900">{task}</span>
+                          <div className="text-right">
+                            <div className="font-bold text-indigo-700">{winner.kid}</div>
+                            <div className="text-sm text-indigo-600">{formatTime(winner.time)}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="mt-4 space-y-2">
+                      <h3 className="font-bold text-indigo-900 text-lg">All Times:</h3>
+                      {kids.map(kid => (
+                        <div key={kid} className="bg-gray-50 rounded-lg p-3 flex justify-between items-center">
+                          <span className="font-semibold text-gray-800">{kid}</span>
+                          <span className="font-mono text-gray-700">
+                            {summary.kidTimes[kid] ? formatTime(summary.kidTimes[kid]) : 'Incomplete'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<BedtimeTracker />);
+    </script>
+</body>
+</html>
