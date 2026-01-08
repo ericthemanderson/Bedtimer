@@ -4,33 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bedtime Routine Tracker</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6366f1">
-    <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
     <div id="root"></div>
     
-    <script type="text/babel">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+    
+    <script>
         const { useState, useEffect } = React;
         const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
         
-        // Lucide icons as SVG components
-        const Clock = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>;
-        const Edit3 = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>;
-        const Play = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>;
-        const RotateCcw = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>;
-        const Plus = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
-        const X = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
-        const Trophy = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>;
-        const Gift = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>;
-        const Trash2 = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>;
-        const Calendar = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>;
+        // Simple SVG icon components
+        const Icon = ({ path, ...props }) => 
+            React.createElement('svg', { width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', ...props },
+                React.createElement('path', { d: path })
+            );
 
         function BedtimeTracker() {
           const [isRunning, setIsRunning] = useState(false);
@@ -49,7 +42,6 @@
           const [showSpendPoints, setShowSpendPoints] = useState(false);
           const [selectedKid, setSelectedKid] = useState('');
           const [pointsToSpend, setPointsToSpend] = useState('');
-          const [prizeDescription, setPrizeDescription] = useState('');
           
           const [newKidName, setNewKidName] = useState('');
           const [newTaskName, setNewTaskName] = useState('');
@@ -177,7 +169,6 @@
             
             setSelectedKid('');
             setPointsToSpend('');
-            setPrizeDescription('');
             setShowSpendPoints(false);
           };
 
@@ -279,299 +270,293 @@
           const summary = showSummary ? calculateSummary() : null;
           const chartData = Object.keys(completions).length > 0 ? getChartData() : [];
 
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 p-4">
-              <div className="max-w-6xl mx-auto">
-                <div className="bg-white rounded-t-3xl shadow-lg p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-3xl font-bold text-indigo-900 flex items-center gap-2">
-                      <Clock />
-                      Bedtime Tracker
-                    </h1>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setShowHistory(!showHistory)}
-                        className="p-3 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors"
-                      >
-                        <Calendar />
-                      </button>
-                      <button
-                        onClick={() => setEditMode(!editMode)}
-                        className={`p-3 rounded-full transition-colors ${
-                          editMode ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600'
-                        }`}
-                      >
-                        <Edit3 />
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-6 text-white">
-                    <div className="text-6xl font-mono font-bold text-center mb-4">
-                      {formatTime(elapsedTime)}
-                    </div>
-                    <div className="flex gap-3 justify-center">
-                      {!isRunning && elapsedTime === 0 && (
-                        <button
-                          onClick={startStopwatch}
-                          className="bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold flex items-center gap-2 hover:bg-indigo-50 transition-colors"
-                        >
-                          <Play />
-                          Start Bedtime
-                        </button>
-                      )}
-                      {(isRunning || elapsedTime > 0) && (
-                        <button
-                          onClick={resetStopwatch}
-                          className="bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold flex items-center gap-2 hover:bg-indigo-50 transition-colors"
-                        >
-                          <RotateCcw />
-                          Reset
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
+          return React.createElement('div', { className: 'min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 p-4' },
+            React.createElement('div', { className: 'max-w-6xl mx-auto' },
+              // Header
+              React.createElement('div', { className: 'bg-white rounded-t-3xl shadow-lg p-6' },
+                React.createElement('div', { className: 'flex justify-between items-center mb-4' },
+                  React.createElement('h1', { className: 'text-3xl font-bold text-indigo-900' }, '⏰ Bedtime Tracker'),
+                  React.createElement('div', { className: 'flex gap-2' },
+                    React.createElement('button', {
+                      onClick: () => setShowHistory(!showHistory),
+                      className: 'p-3 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200'
+                    }, '📅'),
+                    React.createElement('button', {
+                      onClick: () => setEditMode(!editMode),
+                      className: `p-3 rounded-full ${editMode ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600'}`
+                    }, '✏️')
+                  )
+                ),
+                // Stopwatch
+                React.createElement('div', { className: 'bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-6 text-white' },
+                  React.createElement('div', { className: 'text-6xl font-mono font-bold text-center mb-4' }, formatTime(elapsedTime)),
+                  React.createElement('div', { className: 'flex gap-3 justify-center' },
+                    !isRunning && elapsedTime === 0 && React.createElement('button', {
+                      onClick: startStopwatch,
+                      className: 'bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold hover:bg-indigo-50'
+                    }, '▶️ Start Bedtime'),
+                    (isRunning || elapsedTime > 0) && React.createElement('button', {
+                      onClick: resetStopwatch,
+                      className: 'bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold hover:bg-indigo-50'
+                    }, '🔄 Reset')
+                  )
+                )
+              ),
+              
+              // Points Display
+              React.createElement('div', { className: 'bg-white shadow-lg p-4' },
+                React.createElement('div', { className: 'flex justify-between items-center' },
+                  React.createElement('h2', { className: 'text-xl font-bold text-indigo-900' }, '🏆 Points Leaderboard'),
+                  React.createElement('button', {
+                    onClick: () => setShowSpendPoints(!showSpendPoints),
+                    className: 'bg-green-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-green-600'
+                  }, '🎁 Spend Points')
+                ),
+                React.createElement('div', { className: 'grid grid-cols-2 md:grid-cols-4 gap-3 mt-3' },
+                  kids.map((kid, idx) =>
+                    React.createElement('div', { key: kid, className: 'bg-gradient-to-br from-yellow-400 to-orange-400 rounded-lg p-3 text-white text-center' },
+                      React.createElement('div', { className: 'font-bold text-lg' }, kid),
+                      React.createElement('div', { className: 'text-3xl font-bold' }, points[kid] || 0),
+                      React.createElement('div', { className: 'text-sm opacity-90' }, 'points')
+                    )
+                  )
+                )
+              ),
+              
+              // Spend Points Modal
+              showSpendPoints && React.createElement('div', { className: 'bg-white shadow-lg p-4 border-t-2 border-green-500' },
+                React.createElement('h3', { className: 'text-lg font-bold text-gray-800 mb-3' }, 'Spend Points on Prize'),
+                React.createElement('div', { className: 'space-y-3' },
+                  React.createElement('select', {
+                    value: selectedKid,
+                    onChange: (e) => setSelectedKid(e.target.value),
+                    className: 'w-full px-3 py-2 border rounded-lg'
+                  },
+                    React.createElement('option', { value: '' }, 'Select a kid'),
+                    kids.map(kid => React.createElement('option', { key: kid, value: kid }, `${kid} (${points[kid] || 0} points)`))
+                  ),
+                  React.createElement('input', {
+                    type: 'number',
+                    value: pointsToSpend,
+                    onChange: (e) => setPointsToSpend(e.target.value),
+                    className: 'w-full px-3 py-2 border rounded-lg',
+                    placeholder: 'Enter points'
+                  }),
+                  React.createElement('div', { className: 'flex gap-2' },
+                    React.createElement('button', {
+                      onClick: spendPoints,
+                      disabled: !selectedKid || !pointsToSpend || parseInt(pointsToSpend) > (points[selectedKid] || 0),
+                      className: 'flex-1 bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 disabled:bg-gray-300'
+                    }, 'Redeem'),
+                    React.createElement('button', {
+                      onClick: () => setShowSpendPoints(false),
+                      className: 'px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50'
+                    }, 'Cancel')
+                  )
+                )
+              ),
+              
+              // History
+              showHistory && React.createElement('div', { className: 'bg-white shadow-lg p-4 border-t-2 border-purple-500 max-h-96 overflow-y-auto' },
+                React.createElement('h3', { className: 'text-lg font-bold text-gray-800 mb-3' }, 'Previous Bedtimes'),
+                dailyRecords.length === 0 ? 
+                  React.createElement('p', { className: 'text-gray-500 text-center py-4' }, 'No previous records') :
+                  React.createElement('div', { className: 'space-y-2' },
+                    dailyRecords.map((record, idx) =>
+                      React.createElement('div', { key: idx, className: 'bg-gray-50 rounded-lg p-3 flex justify-between items-center' },
+                        React.createElement('div', null,
+                          React.createElement('div', { className: 'font-semibold text-gray-800' },
+                            new Date(record.date).toLocaleDateString() + ' ' + new Date(record.date).toLocaleTimeString()
+                          ),
+                          React.createElement('div', { className: 'text-sm text-gray-600' },
+                            'Points: ' + Object.entries(record.taskPoints || {}).map(([kid, pts]) => `${kid}: ${pts}`).join(', ')
+                          )
+                        ),
+                        React.createElement('button', {
+                          onClick: () => deleteRecord(idx),
+                          className: 'text-red-500 hover:text-red-700 p-2'
+                        }, '🗑️')
+                      )
+                    )
+                  )
+              ),
+              
+              // Task Table
+              React.createElement('div', { className: 'bg-white shadow-lg overflow-x-auto' },
+                React.createElement('table', { className: 'w-full' },
+                  React.createElement('thead', null,
+                    React.createElement('tr', { className: 'bg-indigo-50' },
+                      React.createElement('th', { className: 'p-4 text-left font-bold text-indigo-900 border-r border-indigo-200' }, 'Tasks'),
+                      ...kids.map((kid, i) =>
+                        React.createElement('th', { key: i, className: 'p-4 text-center font-bold text-indigo-900 border-r border-indigo-200' },
+                          editMode && editingKid === i ?
+                            React.createElement('input', {
+                              type: 'text',
+                              defaultValue: kid,
+                              autoFocus: true,
+                              onBlur: (e) => renameKid(i, e.target.value),
+                              onKeyDown: (e) => e.key === 'Enter' && renameKid(i, e.target.value),
+                              className: 'w-full px-2 py-1 border rounded text-center'
+                            }) :
+                            React.createElement('div', { className: 'flex items-center justify-center gap-2' },
+                              React.createElement('span', { 
+                                onClick: () => editMode && setEditingKid(i),
+                                className: 'cursor-pointer'
+                              }, kid),
+                              editMode && React.createElement('button', {
+                                onClick: () => removeKid(i),
+                                className: 'text-red-500 hover:text-red-700'
+                              }, '❌')
+                            )
+                        )
+                      ),
+                      editMode && React.createElement('th', { className: 'p-4' },
+                        React.createElement('div', { className: 'flex gap-2' },
+                          React.createElement('input', {
+                            type: 'text',
+                            placeholder: 'New kid',
+                            value: newKidName,
+                            onChange: (e) => setNewKidName(e.target.value),
+                            onKeyDown: (e) => e.key === 'Enter' && addKid(),
+                            className: 'px-2 py-1 border rounded text-sm'
+                          }),
+                          React.createElement('button', {
+                            onClick: addKid,
+                            className: 'bg-indigo-500 text-white p-1 rounded'
+                          }, '➕')
+                        )
+                      )
+                    )
+                  ),
+                  React.createElement('tbody', null,
+                    ...tasks.map((task, taskIdx) =>
+                      React.createElement('tr', { key: taskIdx, className: 'border-t border-indigo-100' },
+                        React.createElement('td', { className: 'p-4 font-semibold text-indigo-900 border-r border-indigo-200' },
+                          editMode && editingTask === taskIdx ?
+                            React.createElement('input', {
+                              type: 'text',
+                              defaultValue: task,
+                              autoFocus: true,
+                              onBlur: (e) => renameTask(taskIdx, e.target.value),
+                              onKeyDown: (e) => e.key === 'Enter' && renameTask(taskIdx, e.target.value),
+                              className: 'w-full px-2 py-1 border rounded'
+                            }) :
+                            React.createElement('div', { className: 'flex items-center gap-2' },
+                              React.createElement('span', {
+                                onClick: () => editMode && setEditingTask(taskIdx),
+                                className: 'cursor-pointer'
+                              }, task),
+                              editMode && React.createElement('button', {
+                                onClick: () => removeTask(taskIdx),
+                                className: 'text-red-500 hover:text-red-700'
+                              }, '❌')
+                            )
+                        ),
+                        ...kids.map((kid, kidIdx) => {
+                          const key = `${kid}-${task}`;
+                          const completion = completions[key];
+                          return React.createElement('td', { key: kidIdx, className: 'p-2 text-center border-r border-indigo-100' },
+                            React.createElement('button', {
+                              onClick: () => handleTaskComplete(kid, task),
+                              disabled: !isRunning || !!completion,
+                              className: `w-full py-3 px-2 rounded-lg font-mono text-sm ${
+                                completion ? 'bg-green-500 text-white' :
+                                isRunning ? 'bg-indigo-100 hover:bg-indigo-200 text-indigo-900' :
+                                'bg-gray-100 text-gray-400'
+                              }`
+                            }, completion ? formatTime(completion.lapTime) : '—')
+                          );
+                        }),
+                        editMode && React.createElement('td', null)
+                      )
+                    ),
+                    editMode && React.createElement('tr', { className: 'border-t border-indigo-200' },
+                      React.createElement('td', { className: 'p-4' },
+                        React.createElement('div', { className: 'flex gap-2' },
+                          React.createElement('input', {
+                            type: 'text',
+                            placeholder: 'New task',
+                            value: newTaskName,
+                            onChange: (e) => setNewTaskName(e.target.value),
+                            onKeyDown: (e) => e.key === 'Enter' && addTask(),
+                            className: 'px-2 py-1 border rounded text-sm flex-1'
+                          }),
+                          React.createElement('button', {
+                            onClick: addTask,
+                            className: 'bg-indigo-500 text-white p-1 rounded'
+                          }, '➕')
+                        )
+                      )
+                    )
+                  )
+                )
+              ),
+              
+              // Chart
+              chartData.length > 0 && React.createElement('div', { className: 'bg-white shadow-lg p-6' },
+                React.createElement('h3', { className: 'text-xl font-bold text-indigo-900 mb-4' }, 'Progress Chart'),
+                React.createElement(ResponsiveContainer, { width: '100%', height: 300 },
+                  React.createElement(LineChart, { data: chartData },
+                    React.createElement(CartesianGrid, { strokeDasharray: '3 3' }),
+                    React.createElement(XAxis, { dataKey: 'task', angle: -45, textAnchor: 'end', height: 100 }),
+                    React.createElement(YAxis, { label: { value: 'Time (seconds)', angle: -90, position: 'insideLeft' } }),
+                    React.createElement(Tooltip, null),
+                    React.createElement(Legend, null),
+                    ...kids.map((kid, idx) =>
+                      React.createElement(Line, {
+                        key: kid,
+                        type: 'monotone',
+                        dataKey: kid,
+                        stroke: colors[idx % colors.length],
+                        strokeWidth: 2,
+                        dot: { r: 5 }
+                      })
+                    )
+                  )
+                )
+              ),
+              
+              // Summary
+              showSummary && summary && React.createElement('div', { className: 'bg-white rounded-b-3xl shadow-lg p-6' },
+                React.createElement('div', { className: 'text-center mb-6' },
+                  React.createElement('div', { className: 'text-6xl mb-2' }, '🏆'),
+                  React.createElement('h2', { className: 'text-2xl font-bold text-indigo-900' }, 'Bedtime Complete! 🌙')
+                ),
+                summary.overallWinner && React.createElement('div', { className: 'bg-gradient-to-r from-yellow-400 to-orange-400 rounded-xl p-4 mb-4 text-center text-white' },
+                  React.createElement('div', { className: 'text-lg font-semibold' }, 'Overall Fastest'),
+                  React.createElement('div', { className: 'text-3xl font-bold' }, summary.overallWinner.kid),
+                  React.createElement('div', { className: 'text-xl' }, formatTime(summary.overallWinner.time))
+                ),
+                React.createElement('div', { className: 'mb-4' },
+                  React.createElement('h3', { className: 'font-bold text-indigo-900 text-lg mb-2' }, 'Points Earned Tonight:'),
+                  React.createElement('div', { className: 'grid grid-cols-2 md:grid-cols-4 gap-3' },
+                    kids.map(kid =>
+                      React.createElement('div', { key: kid, className: 'bg-indigo-50 rounded-lg p-3 text-center' },
+                        React.createElement('div', { className: 'font-bold text-indigo-900' }, kid),
+                        React.createElement('div', { className: 'text-2xl font-bold text-indigo-600' }, '+' + (summary.taskPoints[kid] || 0))
+                      )
+                    )
+                  )
+                ),
+                React.createElement('div', { className: 'space-y-3' },
+                  React.createElement('h3', { className: 'font-bold text-indigo-900 text-lg' }, 'Task Winners (1 point each):'),
+                  ...Object.entries(summary.taskWinners).map(([task, winner]) =>
+                    React.createElement('div', { key: task, className: 'bg-indigo-50 rounded-lg p-3 flex justify-between items-center' },
+                      React.createElement('span', { className: 'font-semibold text-indigo-900' }, task),
+                      React.createElement('div', { className: 'text-right' },
+                        React.createElement('div', { className: 'font-bold text-indigo-700' }, winner.kid),
+                        React.createElement('div', { className: 'text-sm text-indigo-600' }, formatTime(winner.time))
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          );
+        }
 
-                <div className="bg-white shadow-lg p-4">
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-indigo-900 flex items-center gap-2">
-                      <Trophy />
-                      Points Leaderboard
-                    </h2>
-                    <button
-                      onClick={() => setShowSpendPoints(!showSpendPoints)}
-                      className="bg-green-500 text-white px-4 py-2 rounded-full font-semibold flex items-center gap-2 hover:bg-green-600 transition-colors"
-                    >
-                      <Gift />
-                      Spend Points
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
-                    {kids.map((kid, idx) => (
-                      <div key={kid} className="bg-gradient-to-br from-yellow-400 to-orange-400 rounded-lg p-3 text-white text-center">
-                        <div className="font-bold text-lg">{kid}</div>
-                        <div className="text-3xl font-bold">{points[kid] || 0}</div>
-                        <div className="text-sm opacity-90">points</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {showSpendPoints && (
-                  <div className="bg-white shadow-lg p-4 border-t-2 border-green-500">
-                    <h3 className="text-lg font-bold text-gray-800 mb-3">Spend Points on Prize</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">Kid</label>
-                        <select 
-                          value={selectedKid} 
-                          onChange={(e) => setSelectedKid(e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg"
-                        >
-                          <option value="">Select a kid</option>
-                          {kids.map(kid => (
-                            <option key={kid} value={kid}>{kid} ({points[kid] || 0} points)</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">Points to Spend</label>
-                        <input
-                          type="number"
-                          value={pointsToSpend}
-                          onChange={(e) => setPointsToSpend(e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg"
-                          placeholder="Enter points"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">Prize (optional)</label>
-                        <input
-                          type="text"
-                          value={prizeDescription}
-                          onChange={(e) => setPrizeDescription(e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg"
-                          placeholder="e.g., Extra story, Stay up 15 min later"
-                        />
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={spendPoints}
-                          disabled={!selectedKid || !pointsToSpend || parseInt(pointsToSpend) > (points[selectedKid] || 0)}
-                          className="flex-1 bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-                        >
-                          Redeem
-                        </button>
-                        <button
-                          onClick={() => setShowSpendPoints(false)}
-                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {showHistory && (
-                  <div className="bg-white shadow-lg p-4 border-t-2 border-purple-500 max-h-96 overflow-y-auto">
-                    <h3 className="text-lg font-bold text-gray-800 mb-3">Previous Bedtimes</h3>
-                    {dailyRecords.length === 0 ? (
-                      <p className="text-gray-500 text-center py-4">No previous records</p>
-                    ) : (
-                      <div className="space-y-2">
-                        {dailyRecords.map((record, idx) => (
-                          <div key={idx} className="bg-gray-50 rounded-lg p-3 flex justify-between items-center">
-                            <div>
-                              <div className="font-semibold text-gray-800">
-                                {new Date(record.date).toLocaleDateString()} {new Date(record.date).toLocaleTimeString()}
-                              </div>
-                              <div className="text-sm text-gray-600">
-                                Points earned: {Object.entries(record.taskPoints || {}).map(([kid, pts]) => `${kid}: ${pts}`).join(', ')}
-                              </div>
-                            </div>
-                            <button
-                              onClick={() => deleteRecord(idx)}
-                              className="text-red-500 hover:text-red-700 p-2"
-                            >
-                              <Trash2 />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                <div className="bg-white shadow-lg overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-indigo-50">
-                        <th className="p-4 text-left font-bold text-indigo-900 border-r border-indigo-200">
-                          Tasks
-                        </th>
-                        {kids.map((kid, i) => (
-                          <th key={i} className="p-4 text-center font-bold text-indigo-900 border-r border-indigo-200">
-                            {editMode && editingKid === i ? (
-                              <input
-                                type="text"
-                                defaultValue={kid}
-                                autoFocus
-                                onBlur={(e) => renameKid(i, e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && renameKid(i, e.target.value)}
-                                className="w-full px-2 py-1 border rounded text-center"
-                              />
-                            ) : (
-                              <div className="flex items-center justify-center gap-2">
-                                <span onClick={() => editMode && setEditingKid(i)} className="cursor-pointer">
-                                  {kid}
-                                </span>
-                                {editMode && (
-                                  <button onClick={() => removeKid(i)} className="text-red-500 hover:text-red-700">
-                                    <X />
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                          </th>
-                        ))}
-                        {editMode && (
-                          <th className="p-4">
-                            <div className="flex gap-2">
-                              <input
-                                type="text"
-                                placeholder="New kid"
-                                value={newKidName}
-                                onChange={(e) => setNewKidName(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && addKid()}
-                                className="px-2 py-1 border rounded text-sm"
-                              />
-                              <button onClick={addKid} className="bg-indigo-500 text-white p-1 rounded">
-                                <Plus />
-                              </button>
-                            </div>
-                          </th>
-                        )}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tasks.map((task, taskIdx) => (
-                        <tr key={taskIdx} className="border-t border-indigo-100">
-                          <td className="p-4 font-semibold text-indigo-900 border-r border-indigo-200">
-                            {editMode && editingTask === taskIdx ? (
-                              <input
-                                type="text"
-                                defaultValue={task}
-                                autoFocus
-                                onBlur={(e) => renameTask(taskIdx, e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && renameTask(taskIdx, e.target.value)}
-                                className="w-full px-2 py-1 border rounded"
-                              />
-                            ) : (
-                              <div className="flex items-center gap-2">
-                                <span onClick={() => editMode && setEditingTask(taskIdx)} className="cursor-pointer">
-                                  {task}
-                                </span>
-                                {editMode && (
-                                  <button onClick={() => removeTask(taskIdx)} className="text-red-500 hover:text-red-700">
-                                    <X />
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                          </td>
-                          {kids.map((kid, kidIdx) => {
-                            const key = `${kid}-${task}`;
-                            const completion = completions[key];
-                            return (
-                              <td key={kidIdx} className="p-2 text-center border-r border-indigo-100">
-                                <button
-                                  onClick={() => handleTaskComplete(kid, task)}
-                                  disabled={!isRunning || !!completion}
-                                  className={`w-full py-3 px-2 rounded-lg font-mono text-sm transition-all ${
-                                    completion
-                                      ? 'bg-green-500 text-white'
-                                      : isRunning
-                                      ? 'bg-indigo-100 hover:bg-indigo-200 text-indigo-900'
-                                      : 'bg-gray-100 text-gray-400'
-                                  }`}
-                                >
-                                  {completion ? formatTime(completion.lapTime) : '—'}
-                                </button>
-                              </td>
-                            );
-                          })}
-                          {editMode && <td></td>}
-                        </tr>
-                      ))}
-                      {editMode && (
-                        <tr className="border-t border-indigo-200">
-                          <td className="p-4">
-                            <div className="flex gap-2">
-                              <input
-                                type="text"
-                                placeholder="New task"
-                                value={newTaskName}
-                                onChange={(e) => setNewTaskName(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && addTask()}
-                                className="px-2 py-1 border rounded text-sm flex-1"
-                              />
-                              <button onClick={addTask} className="bg-indigo-500 text-white p-1 rounded">
-                                <Plus />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                {chartData.length > 0 && (
-                  <div className="bg-white shadow-lg p-6">
-                    <h3 className="text-xl font-bold text-indigo-900 mb-4">Progress Chart</h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <LineChart data={chartData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="task" angle={-45} textAnchor="en
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(BedtimeTracker));
+    </script>
+</body>
+</html>
