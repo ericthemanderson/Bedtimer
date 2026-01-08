@@ -46,7 +46,7 @@ Click the edit icon to:
 3. Select "Deploy from a branch"
 4. Choose "main" branch and "/ (root)" folder
 5. Click Save
-6. Your app will be live at `https://YOUR_USERNAME.github.io/bedtime-tracker`
+6. Your app will be live at `https://ericthemanderson.github.io/bedtimer`
 
 ## Install as Mobile App
 
