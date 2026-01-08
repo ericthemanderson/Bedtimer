@@ -404,4 +404,174 @@
                           Redeem
                         </button>
                         <button
-                          onClick={() => setShowSpendPoints(false
+                          onClick={() => setShowSpendPoints(false)}
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {showHistory && (
+                  <div className="bg-white shadow-lg p-4 border-t-2 border-purple-500 max-h-96 overflow-y-auto">
+                    <h3 className="text-lg font-bold text-gray-800 mb-3">Previous Bedtimes</h3>
+                    {dailyRecords.length === 0 ? (
+                      <p className="text-gray-500 text-center py-4">No previous records</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {dailyRecords.map((record, idx) => (
+                          <div key={idx} className="bg-gray-50 rounded-lg p-3 flex justify-between items-center">
+                            <div>
+                              <div className="font-semibold text-gray-800">
+                                {new Date(record.date).toLocaleDateString()} {new Date(record.date).toLocaleTimeString()}
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                Points earned: {Object.entries(record.taskPoints || {}).map(([kid, pts]) => `${kid}: ${pts}`).join(', ')}
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => deleteRecord(idx)}
+                              className="text-red-500 hover:text-red-700 p-2"
+                            >
+                              <Trash2 />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="bg-white shadow-lg overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-indigo-50">
+                        <th className="p-4 text-left font-bold text-indigo-900 border-r border-indigo-200">
+                          Tasks
+                        </th>
+                        {kids.map((kid, i) => (
+                          <th key={i} className="p-4 text-center font-bold text-indigo-900 border-r border-indigo-200">
+                            {editMode && editingKid === i ? (
+                              <input
+                                type="text"
+                                defaultValue={kid}
+                                autoFocus
+                                onBlur={(e) => renameKid(i, e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && renameKid(i, e.target.value)}
+                                className="w-full px-2 py-1 border rounded text-center"
+                              />
+                            ) : (
+                              <div className="flex items-center justify-center gap-2">
+                                <span onClick={() => editMode && setEditingKid(i)} className="cursor-pointer">
+                                  {kid}
+                                </span>
+                                {editMode && (
+                                  <button onClick={() => removeKid(i)} className="text-red-500 hover:text-red-700">
+                                    <X />
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </th>
+                        ))}
+                        {editMode && (
+                          <th className="p-4">
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                placeholder="New kid"
+                                value={newKidName}
+                                onChange={(e) => setNewKidName(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && addKid()}
+                                className="px-2 py-1 border rounded text-sm"
+                              />
+                              <button onClick={addKid} className="bg-indigo-500 text-white p-1 rounded">
+                                <Plus />
+                              </button>
+                            </div>
+                          </th>
+                        )}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tasks.map((task, taskIdx) => (
+                        <tr key={taskIdx} className="border-t border-indigo-100">
+                          <td className="p-4 font-semibold text-indigo-900 border-r border-indigo-200">
+                            {editMode && editingTask === taskIdx ? (
+                              <input
+                                type="text"
+                                defaultValue={task}
+                                autoFocus
+                                onBlur={(e) => renameTask(taskIdx, e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && renameTask(taskIdx, e.target.value)}
+                                className="w-full px-2 py-1 border rounded"
+                              />
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <span onClick={() => editMode && setEditingTask(taskIdx)} className="cursor-pointer">
+                                  {task}
+                                </span>
+                                {editMode && (
+                                  <button onClick={() => removeTask(taskIdx)} className="text-red-500 hover:text-red-700">
+                                    <X />
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </td>
+                          {kids.map((kid, kidIdx) => {
+                            const key = `${kid}-${task}`;
+                            const completion = completions[key];
+                            return (
+                              <td key={kidIdx} className="p-2 text-center border-r border-indigo-100">
+                                <button
+                                  onClick={() => handleTaskComplete(kid, task)}
+                                  disabled={!isRunning || !!completion}
+                                  className={`w-full py-3 px-2 rounded-lg font-mono text-sm transition-all ${
+                                    completion
+                                      ? 'bg-green-500 text-white'
+                                      : isRunning
+                                      ? 'bg-indigo-100 hover:bg-indigo-200 text-indigo-900'
+                                      : 'bg-gray-100 text-gray-400'
+                                  }`}
+                                >
+                                  {completion ? formatTime(completion.lapTime) : '—'}
+                                </button>
+                              </td>
+                            );
+                          })}
+                          {editMode && <td></td>}
+                        </tr>
+                      ))}
+                      {editMode && (
+                        <tr className="border-t border-indigo-200">
+                          <td className="p-4">
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                placeholder="New task"
+                                value={newTaskName}
+                                onChange={(e) => setNewTaskName(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && addTask()}
+                                className="px-2 py-1 border rounded text-sm flex-1"
+                              />
+                              <button onClick={addTask} className="bg-indigo-500 text-white p-1 rounded">
+                                <Plus />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {chartData.length > 0 && (
+                  <div className="bg-white shadow-lg p-6">
+                    <h3 className="text-xl font-bold text-indigo-900 mb-4">Progress Chart</h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="task" angle={-45} textAnchor="en
